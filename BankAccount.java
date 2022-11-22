@@ -3,6 +3,7 @@ package CheaperBanking;
 import java.util.ArrayList;
 
 public class BankAccount {
+    private Person person;
     private String name;
     private int age;
     private String work;

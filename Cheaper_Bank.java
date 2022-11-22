@@ -7,11 +7,16 @@ import java.util.Scanner;
 
 public class Cheaper_Bank {
     private static BufferedReader reader;
+    private static String dataBaseName = "CheaperBanking/accounts.txt";
     public static void main(String[] args) {
+        Cheaper_Bank bank = new Cheaper_Bank();
+
         String fileName = "";
         for (String arg : args) {
             fileName = arg;
         }
+        
+        createTxtFile();
 
         try {
             reader = new BufferedReader(new FileReader(fileName));
@@ -24,8 +29,24 @@ public class Cheaper_Bank {
             System.out.print("Error");
 
         }
+        
 
     }
+    //Function that checks if txt database file of banc accounts exists, if not it is created//
+    public static void createTxtFile(){
+        try {
+            FileReader wr = new FileReader(dataBaseName);
+        } catch (Exception e) {
+            File file = new File(dataBaseName);
+            try{
+                file.createNewFile();
+            } catch (Exception f) {
+                
+            }
+        }
+    }
+
+    //Parsear en rad och kollar samtidigt alla villkor//
     public static void parseLine(String line) {
         String[] instruction = line.split(" ");
         String command = instruction[0];
@@ -38,9 +59,12 @@ public class Cheaper_Bank {
 
             String age = instruction[2];
             if (!isNumeric(age)) validAccount = false;
+            if (Integer.parseInt(age) > 100 || Integer.parseInt(age) < 16) validAccount = false;
 
             String work = instruction[3];
-
+            if(work.length()>100) validAccount = false;
+            if (work.matches("\\w+"));
+            
             if (validAccount) {
                 BankAccount newAccount = new BankAccount(name, Integer.parseInt(age), work);
             } else {
