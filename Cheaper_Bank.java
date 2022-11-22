@@ -21,10 +21,24 @@ public class Cheaper_Bank {
             }
         } catch( Exception e) {
             System.out.print("Error");
+
         }
 
     }
     public static void parseLine(String line) {
-        String[] insruction = line.split(" ");
+        String[] instruction = line.split(" ");
+        String command = instruction[0];
+        if (command.equals("-c")) {
+            Boolean validAccount = true;  // Variable to check if the information of the proposed account is correct
+            String name = instruction[1];
+            String[] names = name.split("_");
+            if (names.length < 2 || names.length > 3) validAccount = false;
+            if (String.join("", names).length() > 20) validAccount = false;
+            
+            String age = instruction[2];
+            String work = instruction[3];
+        } else if (command.equals("-l")) {
+
+        }
     }
 }
