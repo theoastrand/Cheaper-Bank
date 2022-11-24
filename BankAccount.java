@@ -62,6 +62,14 @@ public class BankAccount {
         return id;
     }
 
+    public void addOperation(BankOperation operation) {
+        operations.add(operation);
+    }
+
+    public ArrayList<BankOperation> getOperationsList() {
+        return operations;
+    }
+
     // Two accounts are the same if they have the same id
     // This is so its easier to find and compare accounts from the main program
     @Override

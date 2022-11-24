@@ -14,4 +14,8 @@ public class BankOperation {
     public String toString() {
         return type + ", amount :" + amount;
     }
+
+    public String storeOperation() {
+        return type + "," + amount;
+    }
 }

@@ -45,7 +45,11 @@ public class Cheaper_Bank {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(dataBaseName));
             for (BankAccount b : bankAccounts) {
-                writer.append(b.getID() + ";" + b.getBalance() + "\n");
+                writer.append(b.getID() + ";" + b.getBalance() + ";");
+                for (BankOperation bo : b.getOperationsList()) {
+                    writer.append(bo.storeOperation() + ";");
+                }
+                writer.append("\n");
             }
             writer.close();
         } catch (Exception e) {
@@ -80,11 +84,18 @@ public class Cheaper_Bank {
                 String accountID = accountInfo[0];
                 String balance = accountInfo[1];
                 BankAccount acc = new BankAccount(accountID, Integer.parseInt(balance));
+                List<String> bankOperations = Arrays.asList(accountInfo).subList(2, accountInfo.length);
+                for (String s : bankOperations) {
+                    String[] operation = s.split(",");
+                    BankOperation bo = new BankOperation(operation[0], Integer.parseInt(operation[1]));
+                    acc.addOperation(bo);
+                }
                 loadedAccounts.add(acc);
             }
             reader.close();
         } catch (Exception e) {
             System.out.println("This should never happen, the file is created always");
+            e.printStackTrace();
         }
         return loadedAccounts;
 
@@ -99,7 +110,11 @@ public class Cheaper_Bank {
             System.out.println(bankInfo.size());
             BankAccount newAccount = createAccount(bankInfo.subList(1,4));
             
-            bankAccounts.add(newAccount);
+            if (newAccount == null){
+                System.out.println("");
+            } else {
+                bankAccounts.add(newAccount);
+            }
         } else if (command.equals("-l")) {
             if (instruction[1] != null) {
                 String id = instruction[1];
@@ -182,10 +197,15 @@ public class Cheaper_Bank {
             System.out.println("Invalid data for new bankaccount!");
             System.out.println("Please enter new data in the form: <Name_Surname> <age> <Work place> ");
             System.out.println("Enter this data here (without '<'):");
+            System.out.println("If you don't want to create a new account enter 'q");
 
             Scanner sc = new Scanner(System.in);
             String newLine = sc.nextLine();
             sc.close();
+
+            if (newLine.equals("q")) {
+                return null;
+            }
 
             String[] newData = newLine.split(" ");
 
