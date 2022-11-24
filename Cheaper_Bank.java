@@ -45,7 +45,7 @@ public class Cheaper_Bank {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(dataBaseName));
             for (BankAccount b : bankAccounts) {
-                writer.append(b.getID() + ";" + b.getBalance());
+                writer.append(b.getID() + ";" + b.getBalance() + "\n");
             }
             writer.close();
         } catch (Exception e) {
@@ -57,6 +57,7 @@ public class Cheaper_Bank {
     public static void createTxtFile(){
         try {
             FileReader wr = new FileReader(dataBaseName);
+            wr.close();
         } catch (Exception e) {
             File file = new File(dataBaseName);
             try{
@@ -95,16 +96,18 @@ public class Cheaper_Bank {
         String command = instruction[0];
         if (command.equals("-c")) {
             List<String> bankInfo = Arrays.asList(instruction);
-            //System.out.println(bankInfo.size());
-            BankAccount newAccount = createAccount(bankInfo.subList(1,3));
+            System.out.println(bankInfo.size());
+            BankAccount newAccount = createAccount(bankInfo.subList(1,4));
             
             bankAccounts.add(newAccount);
         } else if (command.equals("-l")) {
             if (instruction[1] != null) {
                 String id = instruction[1];
                 if (login(id)) {
-                    runCommand(Arrays.asList(instruction).subList(1, instruction.length - 1));
+                    runCommand(Arrays.asList(instruction).subList(1, instruction.length));
                 }
+            } else {
+                System.out.println("No AccountID was entered");
             }
         }
     }
@@ -127,6 +130,8 @@ public class Cheaper_Bank {
     private static BankAccount createAccount(List<String> bankData) {
         Boolean validAccount = true;
         String name,age,work;
+
+        System.out.println(bankData);
         
         if (bankData.get(0).equals(null)){
             validAccount = false;
@@ -165,9 +170,9 @@ public class Cheaper_Bank {
 
             // Randomizing a ID until we find one that is not in use
             Random rnd = new Random();
-            int newID = 1000000 + rnd.nextInt(90000000);
+            int newID = 10000000 + rnd.nextInt(90000000);
             while (bankAccounts.contains(new BankAccount(Integer.toString(newID), 0))) {
-                newID = 1000000 + rnd.nextInt(90000000);
+                newID = 10000000 + rnd.nextInt(90000000);
             }
             String id = Integer.toString(newID);
 
