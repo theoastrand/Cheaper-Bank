@@ -14,14 +14,15 @@ import java.util.ArrayList;
 public class Cheaper_Bank {
     //private static BufferedReader reader;
     private static String dataBaseName = "CheaperBanking/accounts.txt";
-    private static ArrayList<BankAccount> bankAccounts = new ArrayList<>();
+    private ArrayList<BankAccount> bankAccounts = new ArrayList<BankAccount>();
     private static int commandCounter; // This counts which command is executing to give better feedback
     public static void main(String[] args) {
+        Cheaper_Bank bank = new Cheaper_Bank();
 
         String fileName = args[0];
         System.out.println(fileName);
         createTxtFile();
-        bankAccounts = loadAccounts();
+        bank.setAccounts(loadAccounts());
 
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
@@ -30,7 +31,7 @@ public class Cheaper_Bank {
             commandCounter = 0;
             while ((currentLine = reader.readLine()) != null) {
                 commandCounter++;
-                parseLine(currentLine);
+                bank.parseLine(currentLine);
             }
             reader.close();
 
@@ -44,12 +45,8 @@ public class Cheaper_Bank {
         // Writing all the updated accounts to the data file
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(dataBaseName));
-            for (BankAccount b : bankAccounts) {
-                writer.append(b.getID() + ";" + b.getBalance() + ";");
-                for (BankOperation bo : b.getOperationsList()) {
-                    writer.append(bo.storeOperation() + ";");
-                }
-                writer.append("\n");
+            for (BankAccount b : bank.getAccounts()) {
+                writer.append(b.getID() + ";" + b.getBalance() + "\n");
             }
             writer.close();
         } catch (Exception e) {
@@ -74,7 +71,7 @@ public class Cheaper_Bank {
 
     // A method that reads all existing accounts from file, will only run once
     public static ArrayList<BankAccount> loadAccounts() {
-        ArrayList<BankAccount> loadedAccounts = new ArrayList<>();
+        ArrayList<BankAccount> loadedAccounts = new ArrayList<BankAccount>();
 
         try {
             BufferedReader reader = new BufferedReader(new FileReader(dataBaseName));
@@ -84,47 +81,35 @@ public class Cheaper_Bank {
                 String accountID = accountInfo[0];
                 String balance = accountInfo[1];
                 BankAccount acc = new BankAccount(accountID, Integer.parseInt(balance));
-                List<String> bankOperations = Arrays.asList(accountInfo).subList(2, accountInfo.length);
-                for (String s : bankOperations) {
-                    String[] operation = s.split(",");
-                    BankOperation bo = new BankOperation(operation[0], Integer.parseInt(operation[1]));
-                    acc.addOperation(bo);
-                }
                 loadedAccounts.add(acc);
             }
             reader.close();
         } catch (Exception e) {
             System.out.println("This should never happen, the file is created always");
-            e.printStackTrace();
         }
         return loadedAccounts;
 
     }
 
     // Determines which command is used and runs it
-    public static void parseLine(String line) {
+    public void parseLine(String line) {
         String[] instruction = line.split(" ");
-        String command = instruction[0];
+        String command = "";
+        if (instruction.length > 0) {
+            command = instruction[0];
+        } 
+
         if (command.equals("-c")) {
             List<String> bankInfo = Arrays.asList(instruction);
             System.out.println(bankInfo.size());
             BankAccount newAccount = createAccount(bankInfo.subList(1,4));
-<<<<<<< HEAD
 
             if (newAccount != null) {
                 bankAccounts.add(newAccount);
             }
 
-=======
-            
-            if (newAccount == null){
-                System.out.println("");
-            } else {
-                bankAccounts.add(newAccount);
-            }
->>>>>>> f9fba180d084aff2270d1eb917983a5b8a295526
         } else if (command.equals("-l")) {
-            if (instruction[1] != null) {
+            if (instruction.length > 1) {
                 String id = instruction[1];
                 if (login(id)) {
                     runCommand(Arrays.asList(instruction).subList(1, instruction.length));
@@ -136,7 +121,7 @@ public class Cheaper_Bank {
     }
 
     // Method to check if the proposed AccountID is a correct and a existing one
-    public static Boolean login(String id) {
+    public Boolean login(String id) {
         if (id.length() != 8) {
             System.out.println("The account you tried to log into was not formated correctly");
             return false;
@@ -150,7 +135,7 @@ public class Cheaper_Bank {
 
     // Creates a new BankAccount with the given data
     // if the data is incorrect it will ask for new data and run again
-    public static BankAccount createAccount(List<String> bankData) {
+    public BankAccount createAccount(List<String> bankData) {
         Boolean validAccount = true;
         String name = "";
         String age = "";
@@ -204,20 +189,11 @@ public class Cheaper_Bank {
             // If the data from the file was incorrect we will ask for new data
             System.out.println("Invalid data for new bankaccount!");
             System.out.println("Please enter new data in the form: <Name_Surname> <age> <Work place> ");
-<<<<<<< HEAD
             System.out.println("Enter this data here (without '<>'):");
-=======
-            System.out.println("Enter this data here (without '<'):");
-            System.out.println("If you don't want to create a new account enter 'q");
->>>>>>> f9fba180d084aff2270d1eb917983a5b8a295526
 
             Scanner sc = new Scanner(System.in);
             String newLine = sc.nextLine();
             sc.close();
-
-            if (newLine.equals("q")) {
-                return null;
-            }
 
             String[] newData = newLine.split(" ");
 
@@ -227,14 +203,14 @@ public class Cheaper_Bank {
     }
 
     // Method for running specific command after logging in
-    private static void runCommand(List<String> input) {
+    public void runCommand(List<String> input) {
         String id = input.get(0);
         // Retrives the BankAccount that we have logged in to
         // Should wotk since indexOf uses equals wich has been override to compare only id
         BankAccount logedinAccount = bankAccounts.get(bankAccounts.indexOf(new BankAccount(id, 0)));
 
 
-        if (input.get(1) == null) {
+        if (input.size() < 2) {
             System.out.println("No operation");
         } else {
             String command = input.get(1);
@@ -243,14 +219,14 @@ public class Cheaper_Bank {
                 logedinAccount.checkBalance();
             } else if (command.equals("-d")) {
 
-                if (!input.get(2).equals(null) && isNumeric(input.get(2))) {
+                if (input.size() > 2 && isNumeric(input.get(2))) {
                     logedinAccount.deposit(Integer.parseInt(input.get(2)));
                 } else {
                     System.out.println("The deposit-amount was not correctly formatted");
                 }
             } else if (command.equals("-w")) {
 
-                if (!input.get(2).equals(null) && isNumeric(input.get(2))) {
+                if (input.size() > 2 && isNumeric(input.get(2))) {
                     logedinAccount.withdraw(Integer.parseInt(input.get(2)));
                 } else {
                     System.out.println("The withdrawl-amount was not correctly formatted");
@@ -269,7 +245,7 @@ public class Cheaper_Bank {
     }
 
     // Help-method to check if a string is numeric
-    public static boolean isNumeric(String str) { 
+    public boolean isNumeric(String str) { 
         try {  
           Double.parseDouble(str);  
           return true;
@@ -279,12 +255,20 @@ public class Cheaper_Bank {
       }
 
       public ArrayList<BankAccount> getAccounts() {
-        return bankAccounts;
+        return this.bankAccounts;
       }
 
       public void addAccount(BankAccount account) {
         if (account != null) {
-            bankAccounts.add(account);
+            this.bankAccounts.add(account);
         }
+      }
+
+      public BankAccount getAccount(String id) {
+        return this.bankAccounts.get(bankAccounts.indexOf(new BankAccount(id, 0)));
+      }
+
+      public void setAccounts(ArrayList<BankAccount> list) {
+        bankAccounts = list;
       }
 }

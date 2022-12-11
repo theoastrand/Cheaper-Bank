@@ -1,5 +1,4 @@
 package CheaperBanking;
-
 public class BankOperation {
     private String type;
     private int amount;
@@ -13,9 +12,5 @@ public class BankOperation {
     @Override
     public String toString() {
         return type + ", amount :" + amount;
-    }
-
-    public String storeOperation() {
-        return type + "," + amount;
     }
 }

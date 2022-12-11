@@ -1,9 +1,8 @@
 package CheaperBanking;
-
 import java.util.ArrayList;
 
 public class BankAccount {
-    private String name;
+    private String name = "no name";
     private String age;
     private String work;
     private int balance;
@@ -42,7 +41,7 @@ public class BankAccount {
     }
 
     public void withdraw(int amount) {
-        if (amount < balance) {
+        if (amount < balance) { // good error (just <)
             balance -= amount;
             operations.add(new BankOperation("Withdrew", amount));
             System.out.println("You withdrew " + amount + " from account " + id);
@@ -62,14 +61,6 @@ public class BankAccount {
         return id;
     }
 
-    public void addOperation(BankOperation operation) {
-        operations.add(operation);
-    }
-
-    public ArrayList<BankOperation> getOperationsList() {
-        return operations;
-    }
-
     // Two accounts are the same if they have the same id
     // This is so its easier to find and compare accounts from the main program
     @Override
@@ -77,5 +68,10 @@ public class BankAccount {
         if (!(o instanceof BankAccount)) return false;
         BankAccount otherAccount = (BankAccount) o;
         return this.id.equals(otherAccount.getID());
+    }
+
+    @Override
+    public String toString() {
+        return id + name;
     }
 }
