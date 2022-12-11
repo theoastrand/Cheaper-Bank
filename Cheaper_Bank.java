@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class Cheaper_Bank {
     //private static BufferedReader reader;
     private static String dataBaseName = "CheaperBanking/accounts.txt";
-    private static ArrayList<BankAccount> bankAccounts;
+    private static ArrayList<BankAccount> bankAccounts = new ArrayList<>();
     private static int commandCounter; // This counts which command is executing to give better feedback
     public static void main(String[] args) {
 
@@ -69,7 +69,7 @@ public class Cheaper_Bank {
     }
 
     // A method that reads all existing accounts from file, will only run once
-    private static ArrayList<BankAccount> loadAccounts() {
+    public static ArrayList<BankAccount> loadAccounts() {
         ArrayList<BankAccount> loadedAccounts = new ArrayList<>();
 
         try {
@@ -98,8 +98,11 @@ public class Cheaper_Bank {
             List<String> bankInfo = Arrays.asList(instruction);
             System.out.println(bankInfo.size());
             BankAccount newAccount = createAccount(bankInfo.subList(1,4));
-            
-            bankAccounts.add(newAccount);
+
+            if (newAccount != null) {
+                bankAccounts.add(newAccount);
+            }
+
         } else if (command.equals("-l")) {
             if (instruction[1] != null) {
                 String id = instruction[1];
@@ -113,7 +116,7 @@ public class Cheaper_Bank {
     }
 
     // Method to check if the proposed AccountID is a correct and a existing one
-    private static Boolean login(String id) {
+    public static Boolean login(String id) {
         if (id.length() != 8) {
             System.out.println("The account you tried to log into was not formated correctly");
             return false;
@@ -127,28 +130,27 @@ public class Cheaper_Bank {
 
     // Creates a new BankAccount with the given data
     // if the data is incorrect it will ask for new data and run again
-    private static BankAccount createAccount(List<String> bankData) {
+    public static BankAccount createAccount(List<String> bankData) {
         Boolean validAccount = true;
-        String name,age,work;
+        String name = "";
+        String age = "";
+        String work = "";
 
         System.out.println(bankData);
         
-        if (bankData.get(0).equals(null)){
-            validAccount = false;
-            name = ""; // Will not be used but needs to be initialized
-        } else {
+        if (bankData.size() == 3) {
+
+            if (bankData.get(0).equals("q")) return null;
+
             name = bankData.get(0);
             String[] names = name.split("_");
             int charsInName = 0;
             for (String s : names) charsInName += s.length();
             // Check if name is correct format, correct amount if names, correct length
             if (charsInName > 20 || names.length < 2 || names.length > 3 || !name.matches("\\w+")) validAccount = false;
-        }
+        
 
-        if (bankData.get(1).equals(null)) {
-            validAccount = false;
-            age = ""; // Will not be used but needs to be initialized
-        } else { // Checks if age is entered correctly
+            // Checks if age is entered correctly
             age = bankData.get(1);
             if (!isNumeric(age)) {
                 validAccount = false;
@@ -156,14 +158,15 @@ public class Cheaper_Bank {
                 int ageInt = Integer.parseInt(age);
                 if (ageInt < 16 || ageInt > 100) validAccount = false;
             }
-        }
 
-        if (bankData.get(2).equals(null)) {
-            validAccount = false;
-            work = ""; // Will not be used but needs to be initialized
-        } else { // Checks if name of workplace id formatted correctly
+            // Checks if name of workplace id formatted correctly
             work = bankData.get(2);
             if (work.length() > 100 || !work.matches("\\w+")) validAccount = false;
+
+        } else if (bankData.size() > 0 && bankData.get(0).equals("q")) {
+            return null;
+        } else {
+            validAccount = false;
         }
 
         if (validAccount) { // If the entered data from file was correct
@@ -181,7 +184,7 @@ public class Cheaper_Bank {
             // If the data from the file was incorrect we will ask for new data
             System.out.println("Invalid data for new bankaccount!");
             System.out.println("Please enter new data in the form: <Name_Surname> <age> <Work place> ");
-            System.out.println("Enter this data here (without '<'):");
+            System.out.println("Enter this data here (without '<>'):");
 
             Scanner sc = new Scanner(System.in);
             String newLine = sc.nextLine();
@@ -237,12 +240,22 @@ public class Cheaper_Bank {
     }
 
     // Help-method to check if a string is numeric
-    private static boolean isNumeric(String str) { 
+    public static boolean isNumeric(String str) { 
         try {  
           Double.parseDouble(str);  
           return true;
         } catch(NumberFormatException e){  
           return false;  
         }  
+      }
+
+      public ArrayList<BankAccount> getAccounts() {
+        return bankAccounts;
+      }
+
+      public void addAccount(BankAccount account) {
+        if (account != null) {
+            bankAccounts.add(account);
+        }
       }
 }
