@@ -1,1 +1,8 @@
+<<<<<<< HEAD
 
+=======
+21481298;800;Deposited,100;Withdrew,50;Deposited,100;Withdrew,50;Deposited,1000;Withdrew,300;
+63460254;0;
+21998140;0;
+74008451;0;
+>>>>>>> f9fba180d084aff2270d1eb917983a5b8a295526
